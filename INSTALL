@@ -1,0 +1,5 @@
+install pip, easy_install
+easy_install jinja2
+pip install bottle
+RegEx Tester:"http://brosinski.com/regex/update"
+add script autoreload page web
