@@ -23,7 +23,7 @@ def humanize_time(secs):
   elif hours == 0:
     return '%dm:%ds' % (mins, secs)      
   elif days == 0:
-        return '%dh:%dm' % (hours, mins)
+    return '%dh:%dm' % (hours, mins)
   else:
     return '%dd%dh' % (days, hours)
 
@@ -52,7 +52,6 @@ def parsing(data):
   for i in results:
     items = {}
     for key in i.keys():
-#      print key
       values = i[key]
       if len(set(values)) == 1:
         items[key] = values[0]
@@ -87,34 +86,22 @@ def info_data():
         i['lastchg'] = humanize_time(a)  
         i['downtime'] = humanize_time(b)
   return info
-top = eval(r.get('list'))
-@bottle.route('/haproxy')
-def main():
-  info = info_data()
-  return bottle.jinja2_template('web.html', info = info, top = top)
 
-@bottle.route('/haproxy;csv;norefresh')
+maps = {'haproxy': 'web.html', 'haproxy;up': 'web_hidedown'}
+map1 = {'haproxy;norefresh': 'web_norefresh', 'haproxy;up;norefresh': 'web_hidedown_norefresh'}
+maps.update(map1)
+r.mset(maps)
+@bottle.route('/:names')
+def main(names):
+  top = eval(r.get('list'))
+  info = info_data()
+  return bottle.jinja2_template(r.get(names), info = info, top = top)
+@bottle.route('/haproxy;csv;norefresh')  
 def csv():
   return r.get("csv")
 
-@bottle.route('/haproxy;norefresh')
-def norefresh():
-  """disable refresh"""
-  info = info_data()
-  return bottle.jinja2_template('web_norefresh', info = info, top = top)
-@bottle.route('/haproxy;up')
-def hidedown():
-  """hidedown"""
-  info = info_data()
-  return bottle.jinja2_template('web_hidedown', info = info, top = top)
-@bottle.route('/haproxy;up;norefresh')
-def hidedown_norefresh():
-  info = info_data()
-  return bottle.jinja2_template('web_hidedown_norefresh', info = info, top = top)
-############
-
-if __name__ == "__main__":    
-  main()   
+#####################
+if __name__ == "__main__":
   bottle.debug(True)
   bottle.run(port=8088)
 
