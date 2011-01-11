@@ -86,7 +86,7 @@ def get_info():
     pid = re.compile('pid = </b> (.*) \(')
 
     pid = re.findall(pid, html)[0]
-    print pid
+#    print pid
     if process not in processes:
       processes.append(process)
       l_cconns.append(cconns)
@@ -102,7 +102,7 @@ def get_info():
   list2 = {'cconns': t_cconns, 'running': t_rtasks1, 'tasks': t_rtasks2}
   list1.update(list2)
   pids.sort()
-  print pids
+#  print pids
   list1.update({'pids': ', '.join(pids)})
   r.set('list', list1)
 if __name__ == "__main__":
@@ -110,10 +110,10 @@ if __name__ == "__main__":
     print "Getting data..."
     data = get_all_data()
     get_info()
-#    try:
-#      get_info() 
-#    except IndexError:
-#      pass
+    try:
+      get_info() 
+    except IndexError:
+      pass
     r.set("data", data)
     print "Sleeping..."
     time.sleep(2)
