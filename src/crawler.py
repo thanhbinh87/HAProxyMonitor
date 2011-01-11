@@ -116,4 +116,4 @@ if __name__ == "__main__":
 #      pass
     r.set("data", data)
     print "Sleeping..."
-    time.sleep(4)
+    time.sleep(2)
