@@ -48,8 +48,8 @@ def get_info():
   url = settings.HTML_HAPROXY
   sock = urllib.urlopen(url) 
   html = sock.read()
-  proc = re.compile('nbproc\ =\ (\d)')
-  nbproc = re.findall(proc, html)[0]
+  nbproc = re.compile('nbproc\ =\ (\d)')
+  nbproc = re.findall(nbproc, html)[0]
   process = re.compile('process #(\d)')
   process = re.findall(process, html)[0]
   uptime = re.compile('uptime = </b> (.*)<br>')
@@ -69,24 +69,21 @@ def get_info():
   l_cconns = []
   l_rtasks1 = []
   l_rtasks2 = []
-  while len(processes) < 4:
+  while len(processes) < nbproc:
     url = settings.HTML_HAPROXY
     sock = urllib.urlopen(url) 
     html = sock.read()
-#    print html
     process = re.compile('process #(\d)')
     process = re.findall(process, html)[0]  
     cconns = re.compile('current conns = (.*);')
     cconns = re.findall(cconns, html)[0]
-#    print cconns
     rtasks1 = re.compile('Running tasks: (.*)/')
     rtasks1 = re.findall(rtasks1, html)[0]
     rtasks2 = re.compile('Running tasks: .*/(.*)<')
     rtasks2 = re.findall(rtasks2, html)[0]
     pid = re.compile('pid = </b> (.*) \(')
-
     pid = re.findall(pid, html)[0]
-#    print pid
+    
     if process not in processes:
       processes.append(process)
       l_cconns.append(cconns)
@@ -102,18 +99,18 @@ def get_info():
   list2 = {'cconns': t_cconns, 'running': t_rtasks1, 'tasks': t_rtasks2}
   list1.update(list2)
   pids.sort()
-#  print pids
   list1.update({'pids': ', '.join(pids)})
   r.set('list', list1)
+  
 if __name__ == "__main__":
   while True:
-    print "Getting data..."
-    data = get_all_data()
-    get_info()
     try:
-      get_info() 
-    except IndexError:
+      print "Getting data..."
+      data = get_all_data()
+      get_info()
+      r.set("data", data)
+    except:
       pass
-    r.set("data", data)
     print "Sleeping..."
-    time.sleep(2)
+    time.sleep(6)
+      
